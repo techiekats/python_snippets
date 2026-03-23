@@ -1,30 +1,76 @@
 ##https://leetcode.com/problems/lru-cache/description/
+class Node:
+    def __init__(self, value:int):
+        self._value = value
+        self._prev = None
+        self._next = None
+    def getValue (self):
+        return self._value
+    def getPrev (self):
+        return self._prev
+    def getNext (self):
+        return self._next
+    def setPrev (self, x):
+        self._prev = x
+    def setNext (self, x):
+        self._next = x
 class LRUCache:
 
     def __init__(self, capacity: int):
         self._cache = {}
         self._capacity = capacity
-        self._usage_heap = []
+        self._head = None
+        self._tail = None
         self._size = 0
 
     def get(self, key: int) -> int:
+        value = -1
         if key in self._cache:
-            [value, usage] = self._cache[key]
-            self._cache[key] = [value, usage+1]
-            return value
-        return -1
+            [value, node] = self._cache[key]
+            if node is None:
+                node = Node(key)
+                if self._head is None and self._tail is None:
+                    self._head = self._tail = node
+                    node.setPrev(node)
+                    node.setNext(node)
+                else:
+                    self._head.setPrev (node)
+                    self._tail.setNext (node)
+                    node.setPrev (self._tail)
+                    node.setNext (self._head)
+                    self._head = node
+            else:
+                if node == self._tail:
+                    self._head = self._tail
+                    self._tail = self._tail.getPrev()
+                else:
+                    ##if node is head, do nothing
+                    if node != self._head:
+                        node.getPrev().setNext(node.getNext())
+                        node.getNext().setPrev(node.getPrev())
+                        node.setNext(self._head.getNext())
+                        node.setPrev(self._head.getPrev())
+                        self._head = node
+        return value
 
     def put(self, key: int, value: int) -> None:
-        usage = 0
-        #for an existing key, do not overwrite usage
-        if key in self._cache:
-            usage = self._cache[key][1]
-        else:
+        value_node = None
+        if key not in self._cache:
             if len(self._cache) == self._capacity:
-                print ('Invoke eviction')
-                
-        self._cache[key] = [value, usage]
-        print (self._cache)
+                #simply remove the LRU. No need for updates
+                del self._cache[self._tail.getValue()]
+                new_tail = self._tail.getPrev()
+                if new_tail is not None:
+                    new_tail.setNext (self._tail.getNext())
+                else:
+                    new_tail = self._head
+                self._tail = new_tail
+        else:
+            value_node = self._cache[key][1]
+        self._cache[key] = [value, value_node]
+
+
+
 
 
 # Your LRUCache object will be instantiated and called as such:
