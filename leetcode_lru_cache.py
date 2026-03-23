@@ -22,6 +22,7 @@ class LRUCache:
         else:
             if len(self._cache) == self._capacity:
                 print ('Invoke eviction')
+                
         self._cache[key] = [value, usage]
         print (self._cache)
 
