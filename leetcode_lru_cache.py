@@ -21,72 +21,51 @@ class LRUCache:
     def __init__(self, capacity: int):
         self._cache = {}
         self._capacity = capacity
-        self._head = None
-        self._tail = None
-        self._size = 0
+        ##NOTE: these are sentinel nodes. This pattern simplified the myriad of edge cases in doubly linked lists
+        ## E.g. of edge cases that would need to be handled:
+        #       - How to initialize when both head and tail nodes are the same
+        #       - How to delete when cache size = 1
+        #       - When cache size is 2; and the tail becomes new head...
+        self._head = Node(-1)
+        self._tail = Node(-1)
+        self._head.setNext(self._tail)
+        self._tail.setNext(self._head)
+        self._head.setPrev(self._tail)
+        self._tail.setNext(self._head)
+
+    ##This assumes the node already exists in the doubly linked list
+    def resetHeadTo(self, node:Node):       
+        node.setNext(self._head.getNext())
+        node.setPrev(self._head)
+        self._head.getNext().setPrev(node)
+        self._head.setNext(node) ## The node effectively becomes the new head
 
     def get(self, key: int) -> int:
         value = -1
         if key in self._cache:
             [value, node] = self._cache[key]
-            if node is None:
-                node = Node(key)
-                if self._head is None and self._tail is None:
-                    self._head = self._tail = node
-                    node.setPrev(node)
-                    node.setNext(node)
-                else:
-                    self._head.setPrev (node)
-                    self._tail.setNext (node)
-                    node.setPrev (self._tail)
-                    node.setNext (self._head)
-                    self._head = node
-            else:
-                if node == self._tail:
-                    self._head = self._tail
-                    self._tail = self._tail.getPrev()
-                else:
-                    ##if node is head, do nothing
-                    if node != self._head:
-                        node.getPrev().setNext(node.getNext())
-                        node.getNext().setPrev(node.getPrev())
-                        node.setNext(self._head.getNext())
-                        node.setPrev(self._head.getPrev())
-                        self._head = node
+            node.getPrev().setNext(node.getNext())
+            node.getNext().setPrev(node.getPrev())
+            self.resetHeadTo(node)
         return value
 
     def put(self, key: int, value: int) -> None:
-        value_node = None
+        node = None
         if key not in self._cache:
             if len(self._cache) == self._capacity:
                 # cache eviction
-                del self._cache[self._tail.getValue()]
-                node = self._tail.getPrev()
-                node.setNext(self._head)
-                self._tail = node
-            ##new key now becomes head
-            value_node = Node(key)
-
-        else: ##If key is already in cache, cache is already within capacity
-            value_node = self._cache[key][1]
-            prev = value_node.getPrev()
-            next = value_node.getNext()
-            if prev is not None:
-                prev.setNext(next)
-            if next is not None:
-                next.setPrev(prev)
-        ##inserting and updating make the key the most recent item
-        self._cache[key] = [value, value_node]
-        value_node.setPrev(self._tail)
-        value_node.setNext(self._head)
-        if self._head is not None:
-            self._head.setPrev(value_node)
-        if self._tail is not None:
-            self._tail.setNext(value_node)
-
-
-
-
+                eviction_key = self._tail.getPrev().getValue()
+                del self._cache[eviction_key]
+                new_tail = self._tail.getPrev().getPrev()
+                new_tail.setNext(self._tail)
+                self._tail.setPrev(new_tail)
+            node = Node(key)
+        else:
+            node = self._cache[key][1]
+            
+        self._cache[key] = [value, node]
+        self.resetHeadTo(node)
+    
 
 # Your LRUCache object will be instantiated and called as such:
 # obj = LRUCache(capacity)
