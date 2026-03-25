@@ -14,6 +14,8 @@ class Node:
         self._prev = x
     def setNext (self, x):
         self._next = x
+    def setValue (self, x):
+        self._value = x
 class LRUCache:
 
     def __init__(self, capacity: int):
@@ -57,17 +59,30 @@ class LRUCache:
         value_node = None
         if key not in self._cache:
             if len(self._cache) == self._capacity:
-                #simply remove the LRU. No need for updates
+                # cache eviction
                 del self._cache[self._tail.getValue()]
-                new_tail = self._tail.getPrev()
-                if new_tail is not None:
-                    new_tail.setNext (self._tail.getNext())
-                else:
-                    new_tail = self._head
-                self._tail = new_tail
-        else:
+                node = self._tail.getPrev()
+                node.setNext(self._head)
+                self._tail = node
+            ##new key now becomes head
+            value_node = Node(key)
+
+        else: ##If key is already in cache, cache is already within capacity
             value_node = self._cache[key][1]
+            prev = value_node.getPrev()
+            next = value_node.getNext()
+            if prev is not None:
+                prev.setNext(next)
+            if next is not None:
+                next.setPrev(prev)
+        ##inserting and updating make the key the most recent item
         self._cache[key] = [value, value_node]
+        value_node.setPrev(self._tail)
+        value_node.setNext(self._head)
+        if self._head is not None:
+            self._head.setPrev(value_node)
+        if self._tail is not None:
+            self._tail.setNext(value_node)
 
 
 
