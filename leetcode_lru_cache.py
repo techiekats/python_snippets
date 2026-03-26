@@ -33,28 +33,45 @@ class LRUCache:
         self._head.setPrev(self._tail)
         self._tail.setNext(self._head)
 
+    def printDoublyLinkedList(self):
+        next_key = self._head.getNext().getValue()
+        node = self._head.getNext()
+        print ('start printing list')
+        while next_key!= -1:
+            print (f'Key:{node.getValue()}')
+            node = node.getNext()
+            next_key = node.getValue()
+        print ('end printing list')
     ##This assumes the node already exists in the doubly linked list
     def resetHeadTo(self, node:Node):       
         node.setNext(self._head.getNext())
         node.setPrev(self._head)
         self._head.getNext().setPrev(node)
         self._head.setNext(node) ## The node effectively becomes the new head
+    
+    def performByPass (self, node:Node):
+        node.getPrev().setNext(node.getNext())
+        node.getNext().setPrev(node.getPrev())
+        node.setNext(None)
+        node.setPrev(None)
 
     def get(self, key: int) -> int:
         value = -1
         if key in self._cache:
             [value, node] = self._cache[key]
-            node.getPrev().setNext(node.getNext())
-            node.getNext().setPrev(node.getPrev())
+            self.performByPass(node)
             self.resetHeadTo(node)
         return value
 
     def put(self, key: int, value: int) -> None:
         node = None
+        #self.printDoublyLinkedList()
+
         if key not in self._cache:
             if len(self._cache) == self._capacity:
                 # cache eviction
                 eviction_key = self._tail.getPrev().getValue()
+                #print (f'Eviction key:{eviction_key}')
                 del self._cache[eviction_key]
                 new_tail = self._tail.getPrev().getPrev()
                 new_tail.setNext(self._tail)
@@ -62,15 +79,19 @@ class LRUCache:
             node = Node(key)
         else:
             node = self._cache[key][1]
+            self.performByPass(node)
             
         self._cache[key] = [value, node]
         self.resetHeadTo(node)
-    
 
-# Your LRUCache object will be instantiated and called as such:
-# obj = LRUCache(capacity)
-# param_1 = obj.get(key)
-# obj.put(key,value)
+
+lRUCache = LRUCache(2)
+lRUCache.put(2,1)
+lRUCache.put(1,1)
+lRUCache.put(2,3)
+lRUCache.put(4,1)
+assert lRUCache.get(1) == -1
+assert lRUCache.get(2) == 3
 
 lRUCache = LRUCache(2)
 lRUCache.put(1, 1) # cache is {1 = 1}
@@ -82,3 +103,26 @@ lRUCache.put(4, 4) # LRU key was 1, evicts key 1, cache is {4 = 4, 3 = 3}
 assert lRUCache.get(1) == -1 # return -1(not found)
 assert lRUCache.get(3) == 3 # return 3
 assert lRUCache.get(4) == 4# return 4
+
+lRUCache = LRUCache(1)
+assert lRUCache.get(3) == -1
+lRUCache.put(3, 4)
+assert lRUCache.get (3) == 4
+lRUCache.put(3,6)
+assert lRUCache.get(3) == 6
+lRUCache.put(5,7)
+assert lRUCache.get(3) == -1
+assert lRUCache.get(5) == 7
+
+lRUCache = LRUCache(5)
+lRUCache.put(1,1)
+lRUCache.put(2,2)
+lRUCache.put(3,3)
+lRUCache.put(4,4)
+lRUCache.put(5,5)
+for i in range (1,6):
+    assert lRUCache.get(i) == i
+
+lRUCache.put(6,6)
+assert lRUCache.get(1) == -1
+assert lRUCache.get(5) == 5
