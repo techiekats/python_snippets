@@ -16,12 +16,8 @@ class Solution:
         ## create queue. a queue is necessary to detect cycles
         queue = deque([u for u in range(numCourses) if indegree[u] == 0])
 
-        visited = [0] * numCourses
         while queue:
             x = queue.popleft()
-            if visited[x] == -1:
-                return False
-            visited[x] = -1
             if x in adj_list:
                 for v in adj_list[x]:
                     indegree[v] = indegree[v] - 1
