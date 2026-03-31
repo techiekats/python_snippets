@@ -4,7 +4,7 @@ class Solution:
     def carFleet(self, target: int, position: list[int], speed: list[int]) -> int:
         if len(position) == 1:
             return 1
-
+        raise Exception('The approach here to sort by car speeds is wrong. Sort by distance from target. See solution here: https://algo.monster/liteproblems/853')
         # Per the caller, s1 is the lower of the speeds
         def willMeet(p1, s1, p2, s2):
             # conditions where catch up is not possible. Lower speed vehicle should not be behind
@@ -17,8 +17,9 @@ class Solution:
             s = s2 - s1
             t = d / s
             # because slower vehicle's speed doesn't change
-            meeting_point = s1 * t
-            return meeting_point <= target
+            meeting_point = s1 * t + p1
+            print (f"({p1},{s1}) ({p2},{s2}){p1+meeting_point}")
+            return meeting_point < target
         ##NOTE: zip does not directly return list
         s_and_p = list (zip (speed, position))
         ##NOTE: consider the tuple (x,y) as a list. See the lambda function
@@ -32,10 +33,9 @@ class Solution:
             p.append(x[1])
         for i in range (len(s)):
             if p[i] != -1:
-                for j in range (i, len(s)):
-                    if i!= j:
-                        if willMeet (p[i], s[i],p[j], s[j]):
-                            p[j] = -1
+                for j in range (i+1, len(s)):
+                    if willMeet (p[i], s[i],p[j], s[j]):
+                        p[j] = -1
         return sum (x >= 0 for x in p)
 
 #tests
@@ -46,11 +46,11 @@ class Solution:
 # All the values of position are unique.
 # 0 < speed[i] <= 106
 s = Solution()
+
+assert s.carFleet(target = 100, position = [0,20,90,40,70], speed = [50,30,10,60,30]) == 2
 assert s.carFleet(target = 12, position = [10,8,0,5,3], speed = [2,4,1,1,3]) == 3
 assert s.carFleet(target = 10, position = [3], speed = [3]) == 1
 assert s.carFleet(target = 100, position = [0,2,4], speed = [4,2,1]) == 1
 assert s.carFleet(target = 100, position = [1,2,3,4,5], speed = [1,2,3,4,5]) == 5
 assert s.carFleet(target = 100, position = [0,20,3,4,40], speed = [50,30,3,4,10]) == 3
-assert s.carFleet(target = 100, position = [0,20,90,40,70], speed = [50,30,10,60,30]) == 2
-
 
