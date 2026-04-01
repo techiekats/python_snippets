@@ -18,11 +18,10 @@ class Solution:
 
         while queue:
             x = queue.popleft()
-            if x in adj_list:
-                for v in adj_list[x]:
-                    indegree[v] = indegree[v] - 1
-                    if indegree[v] == 0:
-                        queue.append(v)
+            for v in adj_list.get(x, []):
+                indegree[v] = indegree[v] - 1
+                if indegree[v] == 0: ##There is no need to keep track of visited nodes because we only add "new" nodes with indegree 0
+                    queue.append(v)
         return not any(x > 0 for x in indegree)
 
 ## Test cases
