@@ -1,10 +1,5 @@
 #https://leetcode.com/problems/serialize-and-deserialize-binary-tree/description/
-# Definition for a binary tree node.
-class TreeNode(object):
-    def __init__(self, x):
-        self.val = x
-        self.left = None
-        self.right = None
+from leetcode_helper_functions import TreeNode
 
 class Codec:
     ## returns string from tree representation

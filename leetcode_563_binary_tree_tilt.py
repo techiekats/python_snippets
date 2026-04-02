@@ -1,33 +1,33 @@
 #https://leetcode.com/problems/binary-tree-tilt/description/
 from typing import Optional
+from leetcode_helper_functions import TreeNode, parse_tree
 
-
-# Definition for a binary tree node.
-class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
 class Solution:
-    # CHALLENGE was how to pass both sum and tilt upward. Introduce a global variable for such patterns
-    tilt = 0
-
-    def findSum(self, root: Optional[TreeNode]) -> int:
-        if root is None:
-            return 0
-        left_sum = 0
-        right_sum = 0
-        if root.left is not None:
-            left_sum = self.findSum(root.left)
-        if root.right is not None:
-            right_sum = self.findSum(root.right)
-        self.tilt += abs(left_sum - right_sum)
-        return root.val + left_sum + right_sum
-
     def findTilt(self, root: Optional[TreeNode]) -> int:
-        self.findSum(root)
-        return self.tilt
+        # CHALLENGE was how to pass both sum and tilt upward. Introduce a global variable for such patterns
+        tilt = 0
+        def findSum(node: Optional[TreeNode]) -> int:
+            nonlocal tilt
+            if node is None:
+                return 0
+            left_sum = 0
+            right_sum = 0
+            if node.left is not None:
+                left_sum = findSum(node.left)
+            if node.right is not None:
+                right_sum = findSum(node.right)
+            # Declares intent to modify the parent variable
+            tilt += abs(left_sum - right_sum)
+            return node.val + left_sum + right_sum
+        findSum(root)
+        return tilt
 #test cases
 s = Solution()
 ##TODO: create TreeNode from array
-#assert s.findSum([1,2,3]) == 1
+t1 = parse_tree([1,2,3])
+t2 = parse_tree([4,2,9,3,5,None,7])
+t3 = parse_tree([21,7,14,1,1,2,2,3,3])
+
+assert s.findTilt(t2) == 15
+assert s.findTilt(t1) == 1
+assert s.findTilt(t3) == 9

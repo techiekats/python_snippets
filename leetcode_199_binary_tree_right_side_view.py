@@ -1,12 +1,9 @@
 #https://leetcode.com/problems/binary-tree-right-side-view/description/
-# Definition for a binary tree node.
-class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
+
 from typing import List, Optional
 from collections import deque
+from leetcode_helper_functions import TreeNode, parse_tree
+
 class Solution:
     def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
         if root is None:
@@ -27,7 +24,6 @@ class Solution:
         return result
 #test cases
 s = Solution()
-##TODO: contruct tree from array
-# assert s.rightSideView([1,2,3,null,5,null,4]) == [1,3,4]
-# assert s.rightSideView([1,2,3,4,null,null,null,5]) == [1,3,4,5]
-# assert s.rightSideView([1,null,3]) == [1,3]
+assert s.rightSideView(parse_tree([1,2,3,None,5,None,4])) == [1,3,4]
+assert s.rightSideView(parse_tree([1,2,3,4,None, None, None,5])) == [1,3,4,5]
+assert s.rightSideView(parse_tree([1,None,3])) == [1,3]
