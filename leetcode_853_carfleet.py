@@ -4,49 +4,34 @@ class Solution:
     def carFleet(self, target: int, position: list[int], speed: list[int]) -> int:
         if len(position) == 1:
             return 1
-        raise Exception('The approach here to sort by car speeds is wrong. Sort by distance from target. See solution here: https://algo.monster/liteproblems/853')
-        # Per the caller, s1 is the lower of the speeds
-        def willMeet(p1, s1, p2, s2):
-            # conditions where catch up is not possible. Lower speed vehicle should not be behind
-            if (p2 > p1) and s2 > s1:
-                return False
-            # same speeds, different start positions can also never catch up
-            if s1 == s2:
-                return p1 == p2
-            d = p1 - p2
-            s = s2 - s1
-            t = d / s
-            # because slower vehicle's speed doesn't change
-            meeting_point = s1 * t + p1
-            print (f"({p1},{s1}) ({p2},{s2}){p1+meeting_point}")
-            return meeting_point < target
+        def willMeet (c1, c2):
+            #the car behind is ALWAYS c1, other is c2. Can make these assumptions because local function
+            if (c1[0] < c2[0]) and (c1[1] > c2[1]):
+                time_to_target = (target - c2[0]) / c2[1]
+                time_to_meet = (c1[0]-c2[0]) / (c2[1]-c1[1])
+                return time_to_meet <= time_to_target
+            return False
         ##NOTE: zip does not directly return list
-        s_and_p = list (zip (speed, position))
+        s_and_p = list (zip (position, speed))
         ##NOTE: consider the tuple (x,y) as a list. See the lambda function
-        s_and_p.sort(key = lambda x: x[0])
-        s = []
-        p = []
-        ##NOTE: Need to recreate the lists because tuples do not allow updates. we need to change position to -1 if it belongs in a cluster
-        for i in range (len(s_and_p)):
-            x = s_and_p[i]
-            s.append(x[0])
-            p.append(x[1])
-        for i in range (len(s)):
-            if p[i] != -1:
-                for j in range (i+1, len(s)):
-                    if willMeet (p[i], s[i],p[j], s[j]):
-                        p[j] = -1
-        return sum (x >= 0 for x in p)
+        ##NOTE: * -1 to sort by descending
+        s_and_p.sort(key = lambda x: x[0] * -1)
+        n = len(position)
+        marked_positions = [0] * n
+        clusters = 0
 
-#tests
-##n == position.length == speed.length
-# 1 <= n <= 105
-# 0 < target <= 106
-# 0 <= position[i] < target
-# All the values of position are unique.
-# 0 < speed[i] <= 106
+        for i in range(n):
+            if marked_positions[i] == 0:
+                clusters = clusters + 1
+                marked_positions[i] = 1
+                for j in range (i+1, n):
+                    if willMeet (s_and_p[j], s_and_p[i]) and marked_positions[j] == 0:
+                        marked_positions[j] = 1
+        return clusters
+
 s = Solution()
 
+assert s.carFleet(target = 10, position = [6,8], speed = [3,2]) == 2
 assert s.carFleet(target = 100, position = [0,20,90,40,70], speed = [50,30,10,60,30]) == 2
 assert s.carFleet(target = 12, position = [10,8,0,5,3], speed = [2,4,1,1,3]) == 3
 assert s.carFleet(target = 10, position = [3], speed = [3]) == 1
