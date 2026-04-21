@@ -27,7 +27,7 @@ class Solution:
                 _row = row + d[0]
                 _col = col + d[1]
                 # can't go wrong with this condition, else will end up visiting same node multiple times
-                if _row < m and _col < n and _row >=0 and _col >=0 and result[_row][_col] == -1:
+                if 0 <= _row < m < n and _col >=0 and result[_row][_col] == -1:
                     queue.append((_row,_col))
                     result[_row][_col] = current_distance + 1
 
