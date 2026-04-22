@@ -15,9 +15,8 @@ class Solution:
         
         #store level of node along with node value
         queue = [(beginWord,1)]
-        visited = {}
-        visited[beginWord] = 1
-        while queue != []:
+        visited = {beginWord: 1}
+        while queue:
             #tuple deconstruction
             (x, level) = queue.pop(0)
             

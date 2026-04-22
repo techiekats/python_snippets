@@ -11,7 +11,7 @@ class Solution:
 
         clusters = 0
         prev_blocking_time = 0
-        ## We need to access in descending order, closest to target to furthest. See the pattern [::1] start from end and step ny -1
+        ## We need to access in descending order, closest to target to furthest. See the pattern [::-1] start from end and step ny -1
         for i in sorted_idx[::-1]:
             t = (target - position[i]) / speed[i]
             if t > prev_blocking_time:

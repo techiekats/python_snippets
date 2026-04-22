@@ -20,17 +20,18 @@ class Solution:
             directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
             for d in directions:
                 (next_m, next_n) = (_m + d[0], _n + d[1])
-                if next_m >= 0 and next_m < m and next_n >= 0 and next_n < n:
+                if 0 <= next_m < m and 0 <= next_n < n:
                     if board[next_m][next_n] != '#':
                         exists = dfs(path, (next_m, next_n))
                         if exists:
                             return True
             # reset here, very important
             board[_m][_n] = temp
+            return None
 
         for _m in range(m):
             for _n in range(n):
-                # very important to tecnique: REDUCE SEARCH SPACE. In recursion, even for 3x3 grids, there are exponential combinations
+                # very important to technique: REDUCE SEARCH SPACE. In recursion, even for 3x3 grids, there are exponential combinations
                 if board[_m][_n] == word[0]:
                     if dfs('', (_m, _n)):
                         return True

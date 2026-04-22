@@ -33,15 +33,6 @@ class LRUCache:
         self._head.setPrev(self._tail)
         self._tail.setNext(self._head)
 
-    def printDoublyLinkedList(self):
-        next_key = self._head.getNext().getValue()
-        node = self._head.getNext()
-        print ('start printing list')
-        while next_key!= -1:
-            print (f'Key:{node.getValue()}')
-            node = node.getNext()
-            next_key = node.getValue()
-        print ('end printing list')
     ##This assumes the node already exists in the doubly linked list
     def resetHeadTo(self, node:Node):       
         node.setNext(self._head.getNext())
@@ -65,13 +56,11 @@ class LRUCache:
 
     def put(self, key: int, value: int) -> None:
         node = None
-        #self.printDoublyLinkedList()
 
         if key not in self._cache:
             if len(self._cache) == self._capacity:
                 # cache eviction
                 eviction_key = self._tail.getPrev().getValue()
-                #print (f'Eviction key:{eviction_key}')
                 del self._cache[eviction_key]
                 new_tail = self._tail.getPrev().getPrev()
                 new_tail.setNext(self._tail)

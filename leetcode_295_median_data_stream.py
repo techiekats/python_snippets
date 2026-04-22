@@ -36,7 +36,7 @@ class MedianFinder:
         ##NOTE: heappop() removes the element. To peek use heap[0]
         ##NOTE: by default, heapq are min heaps. Hence the -1 for the lower elements to simulate max heap
         len_lowest, len_highest = len(self._lowest), len(self._highest)
-
+        ## Intuition: Maintain two heaps of equal size (or +/- 1). One of them is a min-heap (highest half of numbers * -1) and the other a max heap (lowest half of numbers)
         if len_lowest == len_highest:
             return (self._lowest[0] * -1 + self._highest[0]) / 2
         if len_lowest > len_highest: ##This also handles the case of just 1 element

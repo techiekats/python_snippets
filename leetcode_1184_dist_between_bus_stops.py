@@ -2,7 +2,6 @@
 class Solution:
     def distanceBetweenBusStops(self, distance: list[int], start: int, destination: int) -> int:
         total = sum(distance)
-        patch = 0
         ##NOTE: the summing of a sub array
         if start < destination:
             patch = sum(distance[start:destination])

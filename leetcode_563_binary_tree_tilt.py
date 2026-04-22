@@ -23,7 +23,6 @@ class Solution:
         return tilt
 #test cases
 s = Solution()
-##TODO: create TreeNode from array
 t1 = parse_tree([1,2,3])
 t2 = parse_tree([4,2,9,3,5,None,7])
 t3 = parse_tree([21,7,14,1,1,2,2,3,3])

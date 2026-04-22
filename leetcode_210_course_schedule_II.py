@@ -13,7 +13,7 @@ class Solution:
         stack = [x for x in range(numCourses) if indegree[x] == 0]
         courses = []
         ## dfs
-        while stack != []:
+        while stack:
             x = stack.pop()
             courses.append(x)
             ##NOTE: use get() method to avoid if key exists check

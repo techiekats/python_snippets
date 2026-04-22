@@ -8,7 +8,7 @@ class Solution:
             # for mid and right, needed additional loops. For left, reuse the main loop
             if left > 0 and nums[left] == nums[left - 1]:
                 continue
-            target = nums[left] * -1;
+            target = nums[left] * -1
             mid = left + 1
             right = len(nums) - 1
             ##Simplified chain comparison, vs: mid < right and left < mid

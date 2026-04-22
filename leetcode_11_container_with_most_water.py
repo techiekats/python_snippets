@@ -5,14 +5,14 @@ class Solution:
         left = 0
         right = len(heights) - 1
 
-        while (left < right):
+        while left < right:
             height = min(heights[left], heights[right])
             width = right - left
             current_area = height * width
 
-            if (current_area > max_area):
+            if current_area > max_area:
                 max_area = current_area
-            if (heights[left] > heights[right]):
+            if heights[left] > heights[right]:
                 right = right - 1
             else:
                 left = left + 1
